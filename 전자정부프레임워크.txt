@@ -118,14 +118,47 @@ user의 username 과 password는 자유롭게 설정가능
   <role rolename="manager-script"/>
   <role rolename="admin-gui"/>
   <user username="quswhddbs" password="quswhddbs" roles="tomcat,manager-gui,manager-script,admin-gui"/>
--내용(server.xml)
+-내용(server.xml) 
+<Host> // host 사이에 넣어야 한다. 
   <Context path="/manager" privileged="true" docBase="${catalina.home}/webapps/manager"/>
+</Host> 
 http://localhost:8080/manager 를 해보면 서버의 디플로이어를 사용할 수 있게 되었다. 
 
 -5.2. 메이븐 웹 애플리케이션
--5.3. 메이븐 톰캣 플러그인 설정
--Section6. 메이븐 디펜던시 설정
+new -> other -> maven -> maven project -> Artifact Id 는 maven-archetype-webapp 를 선택하여 웹 애플리케이션 생성
+group id : com.rubypaper.maven , artifact id : maven_web , package : com.rubypaper.maven.maven_web
 
+-5.3. 메이븐 톰캣 플러그인 설정
+우클릭 -> maven -> add plugin 
+group id : org.apache.tomcat.maven , artifact id : tomcat7-maven-plugin , version : 2.2
+이렇게 하면 pom.xml 에 톰캣 플러그인이 추가된 것을 볼 수 있다. 아래의 부분도 추가해 준다. 
+<groupId>org.apache.tomcat.maven</groupId>
+    		<artifactId>tomcat7-maven-plugin</artifactId>
+    		<version>2.2</version>
+    		<configuration>
+    			<url>http://localhost:8080/manager/text</url>
+    			<username>quswhddbs</username>
+    			<password>quswhddbs</password>
+				<path>/maven_web</path>
+    		</configuration>
+서버를 시작한 후에 -> Run as -> maven build... 수행 -> goal 은 tomcat7:deploy 를 입력 후 console 에서 BUILD SUCCESS 확인한다. 
+C:\Users\JYP\Desktop\program\eGovFrameDev-3.7.0-64bit\workspace\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\webapps 에 maven_web.war 배포확인 할 수 있다.
+http://localhost:8080/maven_web/ 을 입력해보면 결과를 볼 수 있다.
+계속해서 tomcat7:undeploy 나 tomcat7:redeploy 등을 수행해보면 , 배포된 디렉터리의 변화등을 볼 수 있다. 
+tomcat7:undeploy : 삭제 
+tomcat7:redeploy : 동일한 이름의 애플리케이션 있어도 재배포 
+웹 애플리케이션 제작하고나면 실제 웹 서버에 배포한 후 , 클라이언트 브라우저에서 접속이 가능하다. 
+플러그인 configuration 정보를 실제 연결하고자 하는 웹 서버의 주소와 사용자 이름,패스등을 입력한다.  ex ) 
+<configuration>
+	<url>http://실제운영주소/manager/text</url>
+	<username>user</username>
+	<password>pass</password>
+	<path>/maven_web</path>
+</configuration>
+* 현제 tomcat 에 설정한 부분을 운영서버에 똑같이 설정한 후 local에서 개발 후 위와같은 과정을 거치면 , 자동으로 운영에 배포가 되는것이다.
+테스트 시 이클립스에서 컴파일하고 실행시키는 것이 아니므로 에러는 상관없지만 , 에러를 업애려면 , 프로젝트 우클릭 -> properties -> target Runtime -> Apach tomcat 의 맞는 버전체크 하면 된다.
+
+-Section6. 메이븐 디펜던시 설정
 -CHAPTER 05 버전관리 도구와 지속적 통합S VN, Hudson
 -Section1. 버전관리 도구
 -Section2. SVN(Subversion: 서브버전) 이해
@@ -158,6 +191,9 @@ http://localhost:8080/manager 를 해보면 서버의 디플로이어를 사용�
 -1.2.3. 스프링과 표준프레임워크
 -Section2. 표준프레임워크 템플릿 프로젝트
 -2.1. 표준프레임워크 템플릿 프로젝트 생성
+new -> egovframe web project
+project name : TemplateWeb , maven Settion Group id : com.rubypaper , Artifact id : TemplateWeb , version 1.0.0 -> sample source 체크 
+
 -2.1.1. 웹 프로젝트 생성
 -2.1.2. 웹 프로젝트 실행
 -2.2. 표준프레임워크 템플릿 프로젝트 구조 분석
